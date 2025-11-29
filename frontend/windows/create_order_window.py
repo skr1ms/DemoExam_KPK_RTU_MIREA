@@ -31,7 +31,6 @@ from typing import Dict, List
 
 
 class CreateOrderWindow(QMainWindow):
-
     def __init__(
         self,
         orders_service: OrdersService,

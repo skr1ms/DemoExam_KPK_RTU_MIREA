@@ -9,7 +9,6 @@ from frontend.utils.styles import STYLES
 
 
 class OrderCard(QFrame):
-
     def __init__(self, order: Order, parent=None, on_double_click=None):
         super().__init__(parent)
         self.order = order

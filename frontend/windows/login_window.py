@@ -22,7 +22,6 @@ import os
 
 
 class LoginWindow(QMainWindow):
-
     def __init__(self, auth_service: AuthService, on_success=None):
         super().__init__()
         self.auth_service = auth_service

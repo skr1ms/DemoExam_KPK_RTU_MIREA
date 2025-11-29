@@ -24,7 +24,6 @@ import os
 
 
 class RegisterWindow(QMainWindow):
-
     def __init__(self, auth_service: AuthService, parent=None):
         super().__init__(parent)
         self.auth_service = auth_service

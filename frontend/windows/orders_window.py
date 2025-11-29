@@ -25,7 +25,6 @@ from backend.internal.entity.order import Order
 
 
 class OrdersWindow(QWidget):
-
     def __init__(
         self,
         orders_service: OrdersService,

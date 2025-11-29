@@ -10,7 +10,6 @@ from datetime import datetime
 
 
 class OrdersService:
-
     def __init__(self, orders_usecase: OrdersUseCase):
         self.usecase = orders_usecase
 

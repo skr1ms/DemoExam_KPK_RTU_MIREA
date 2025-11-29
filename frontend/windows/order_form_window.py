@@ -28,7 +28,6 @@ from typing import Optional
 
 
 class OrderFormWindow(QMainWindow):
-
     def __init__(
         self,
         orders_service: OrdersService,

@@ -30,7 +30,6 @@ import shutil
 
 
 class GoodFormWindow(QMainWindow):
-
     def __init__(
         self,
         goods_service: GoodsService,

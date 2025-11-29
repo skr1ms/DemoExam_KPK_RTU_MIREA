@@ -12,7 +12,6 @@ import os
 
 
 class ProductCard(QFrame):
-
     def __init__(
         self,
         good: Good,

@@ -9,7 +9,6 @@ from typing import List, Optional
 
 
 class GoodsService:
-
     def __init__(self, goods_usecase: GoodsUseCase):
         self.usecase = goods_usecase
 

@@ -8,7 +8,6 @@ from typing import Optional, List
 
 
 class AuthService:
-
     def __init__(self, auth_usecase: AuthUseCase):
         self.usecase = auth_usecase
 

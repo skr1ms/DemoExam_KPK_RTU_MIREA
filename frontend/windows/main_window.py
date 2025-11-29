@@ -25,7 +25,6 @@ import os
 
 
 class MainWindow(QMainWindow):
-
     def __init__(
         self,
         user: User,

@@ -26,7 +26,6 @@ from typing import Optional
 
 
 class GoodsWindow(QWidget):
-
     def __init__(self, goods_service: GoodsService, user: Optional[User] = None):
         super().__init__()
         self.goods_service = goods_service
