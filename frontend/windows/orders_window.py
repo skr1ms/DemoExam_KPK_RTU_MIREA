@@ -56,16 +56,6 @@ class OrdersWindow(QWidget):
         layout.addWidget(title)
 
         buttons_layout = QHBoxLayout()
-        refresh_button = QPushButton("Обновить")
-        refresh_button.setStyleSheet(STYLES["BUTTON_STYLE"])
-        refresh_button.clicked.connect(self.load_orders)
-        buttons_layout.addWidget(refresh_button)
-
-        if self.user.role == "Авторизированный клиент":
-            create_button = QPushButton("Создать заказ")
-            create_button.setStyleSheet(STYLES["BUTTON_STYLE"])
-            create_button.clicked.connect(self.create_order)
-            buttons_layout.addWidget(create_button)
 
         if self.user.role == "Администратор":
             add_button = QPushButton("Добавить заказ")

@@ -60,7 +60,6 @@ class AuthorizationUseCase:
         if not user:
             return False
         return user.role in [
-            AuthorizationUseCase.ROLE_CLIENT,
             AuthorizationUseCase.ROLE_MANAGER,
             AuthorizationUseCase.ROLE_ADMIN,
         ]
@@ -80,10 +79,7 @@ class AuthorizationUseCase:
         """Проверить право на создание заказа"""
         if not user:
             return False
-        return user.role in [
-            AuthorizationUseCase.ROLE_CLIENT,
-            AuthorizationUseCase.ROLE_ADMIN,
-        ]
+        return user.role == AuthorizationUseCase.ROLE_ADMIN
 
     @staticmethod
     def can_update_order(user: Optional[User] = None) -> bool:

@@ -92,11 +92,6 @@ class GoodsWindow(QWidget):
             self.sort_combo.currentIndexChanged.connect(self.on_sort_changed)
             search_layout.addWidget(self.sort_combo)
 
-            refresh_button = QPushButton("Обновить")
-            refresh_button.setStyleSheet(STYLES["BUTTON_STYLE"])
-            refresh_button.clicked.connect(self.load_goods)
-            search_layout.addWidget(refresh_button)
-
             layout.addLayout(search_layout)
 
         self.scroll_area = QScrollArea()

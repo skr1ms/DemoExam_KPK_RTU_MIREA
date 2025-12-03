@@ -104,7 +104,7 @@ class MainWindow(QMainWindow):
         self.goods_window = GoodsWindow(self.goods_service, self.user)
         self.tabs.addTab(self.goods_window, "Товары")
 
-        if self.user.role != "Гость":
+        if self.user.role in ["Менеджер", "Администратор"]:
             self.orders_window = OrdersWindow(
                 self.orders_service, self.goods_service, self.user, self.auth_service
             )

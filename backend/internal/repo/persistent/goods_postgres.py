@@ -4,7 +4,7 @@
 
 from backend.pkg.postgres.postgres import PG
 from backend.internal.entity.good import Good
-from sqlalchemy import select
+from sqlalchemy import select, or_, and_, func
 from typing import List, Optional
 
 
@@ -131,19 +131,85 @@ class GoodsPostgres:
         sort_by_count: Optional[str] = None,
         search_query: Optional[str] = None,
     ) -> List[Good]:
-        """Комбинированная фильтрация, поиск и сортировка"""
         async with self.pg.get_session() as session:
             query = select(Good)
 
             if search_query:
-                query = query.filter(
-                    (Good.name.ilike(f"%{search_query}%"))
-                    | (Good.article.ilike(f"%{search_query}%"))
-                    | (Good.description.ilike(f"%{search_query}%"))
-                    | (Good.category.ilike(f"%{search_query}%"))
-                    | (Good.manufacturer.ilike(f"%{search_query}%"))
-                    | (Good.provider.ilike(f"%{search_query}%"))
-                )
+                search_lower = search_query.strip().lower()
+                search_words = search_lower.split()
+
+                def is_gender_word(word: str) -> bool:
+                    """Проверяет, является ли слово указанием пола"""
+                    return word.startswith("муж") or word.startswith("жен")
+
+                def get_gender_prefix(word: str) -> str:
+                    """Получает префикс пола (первые 3-4 символа)"""
+                    if word.startswith("муж"):
+                        return "муж"
+                    elif word.startswith("жен"):
+                        return "жен"
+                    return None
+
+                if len(search_words) == 1:
+                    word = search_words[0]
+                    if is_gender_word(word):
+                        prefix = get_gender_prefix(word)
+                        query = query.filter(
+                            or_(
+                                func.lower(Good.name) == word,
+                                func.lower(Good.category).ilike(f"%{prefix}%"),
+                            )
+                        )
+                    else:
+                        query = query.filter(
+                            or_(
+                                func.lower(Good.name) == word,
+                                func.lower(Good.category).ilike(f"%{word}%"),
+                            )
+                        )
+                else:
+                    conditions = []
+
+                    for name_word in search_words:
+                        other_words = [w for w in search_words if w != name_word]
+                        if other_words:
+                            category_conditions = []
+                            for cat_word in other_words:
+                                if is_gender_word(cat_word):
+                                    prefix = get_gender_prefix(cat_word)
+                                    category_conditions.append(
+                                        func.lower(Good.category).ilike(f"%{prefix}%")
+                                    )
+                                else:
+                                    category_conditions.append(
+                                        func.lower(Good.category).ilike(f"%{cat_word}%")
+                                    )
+
+                            conditions.append(
+                                and_(
+                                    func.lower(Good.name) == name_word,
+                                    and_(*category_conditions),
+                                )
+                            )
+
+                    if len(search_words) > 1:
+                        all_category_conditions = []
+                        for cat_word in search_words:
+                            if is_gender_word(cat_word):
+                                prefix = get_gender_prefix(cat_word)
+                                all_category_conditions.append(
+                                    func.lower(Good.category).ilike(f"%{prefix}%")
+                                )
+                            else:
+                                all_category_conditions.append(
+                                    func.lower(Good.category).ilike(f"%{cat_word}%")
+                                )
+                        conditions.append(and_(*all_category_conditions))
+
+                    if conditions:
+                        query = query.filter(or_(*conditions))
+                    else:
+                        query = query.filter(False)
 
             if provider:
                 query = query.filter(Good.provider == provider)

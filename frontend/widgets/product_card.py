@@ -2,7 +2,7 @@
 Виджет карточки товара согласно макету product_card.png
 """
 
-from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QFrame
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QFrame, QWidget
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtCore import Qt
 from backend.internal.entity.good import Good
@@ -61,8 +61,6 @@ class ProductCard(QFrame):
         """Получить базовый стиль в зависимости от состояния товара"""
         if self.good.discount and float(self.good.discount) > 15:
             return STYLES.get("PRODUCT_CARD_DISCOUNT_STYLE", "")
-        elif self.good.count == 0:
-            return STYLES.get("PRODUCT_CARD_OUT_OF_STOCK_STYLE", "")
         else:
             return STYLES.get("PRODUCT_CARD_STYLE", "")
 
@@ -118,8 +116,12 @@ class ProductCard(QFrame):
         unit_label = QLabel(f"Единица измерения: {self.good.unit_of_measurement}")
         info_layout.addWidget(unit_label)
 
-        count_label = QLabel(f"Количество на складе: {self.good.count}")
-        info_layout.addWidget(count_label)
+        self.count_label = QLabel(f"Количество на складе: {self.good.count}")
+        if self.good.count == 0:
+            self.count_label.setStyleSheet(
+                STYLES.get("PRODUCT_CARD_COUNT_ZERO_STYLE", "")
+            )
+        info_layout.addWidget(self.count_label)
 
         info_layout.addStretch()
         main_layout.addWidget(info_panel, stretch=1)
@@ -187,7 +189,10 @@ class ProductCard(QFrame):
 
     def format_price(self):
         """Форматировать цену с учетом скидки"""
-        price_label = QLabel()
+        price_container = QHBoxLayout()
+        price_widget = QWidget()
+        price_widget.setLayout(price_container)
+
         original_price = float(self.good.price)
 
         if not self.goods_service:
@@ -198,17 +203,25 @@ class ProductCard(QFrame):
             )
 
         if self.good.discount and float(self.good.discount) > 0:
+            original_label = QLabel(f"{original_price:.2f}")
             font = QFont()
             font.setStrikeOut(True)
-            price_label.setFont(font)
-            price_label.setText(f"{original_price:.2f} → {final_price:.2f}")
-            price_label.setStyleSheet(
+            original_label.setFont(font)
+            original_label.setStyleSheet(
                 STYLES.get("PRODUCT_CARD_PRICE_DISCOUNTED_STYLE", "")
             )
+            price_container.addWidget(original_label)
+
+            final_label = QLabel(f"{final_price:.2f}")
+            final_label.setStyleSheet(STYLES.get("PRODUCT_CARD_PRICE_NORMAL_STYLE", ""))
+            price_container.addWidget(final_label)
         else:
-            price_label.setText(str(final_price))
+            price_label = QLabel(str(final_price))
             price_label.setStyleSheet(STYLES.get("PRODUCT_CARD_PRICE_NORMAL_STYLE", ""))
-        return price_label
+            price_container.addWidget(price_label)
+
+        price_container.addStretch()
+        return price_widget
 
     def apply_styles(self):
         """Применить стили к карточке"""

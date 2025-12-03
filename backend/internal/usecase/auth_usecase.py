@@ -33,17 +33,14 @@ class AuthUseCase:
         role: str = "Авторизированный клиент",
     ) -> User:
         """Регистрация нового пользователя"""
-        # Валидация email
         is_valid, error_msg = EmailValidator.validate(login)
         if not is_valid:
             raise ValueError(error_msg)
 
-        # Валидация ФИО
         is_valid, error_msg = FullNameValidator.validate(full_name)
         if not is_valid:
             raise ValueError(error_msg)
 
-        # Валидация пароля
         is_valid, error_msg = PasswordValidator.validate(password)
         if not is_valid:
             raise ValueError(error_msg)

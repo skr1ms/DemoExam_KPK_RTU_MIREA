@@ -112,6 +112,7 @@ class OrderFormWindow(QMainWindow):
         self.date_order_input.setCalendarPopup(True)
         self.date_order_input.setDate(QDate.currentDate())
         self.date_order_input.setStyleSheet(STYLES["INPUT_STYLE"])
+        self.date_order_input.dateChanged.connect(self.validate_dates)
         layout.addWidget(self.date_order_input)
 
         date_delivery_label = QLabel("Дата выдачи:")
@@ -121,7 +122,13 @@ class OrderFormWindow(QMainWindow):
         self.date_delivery_input.setCalendarPopup(True)
         self.date_delivery_input.setDate(QDate.currentDate())
         self.date_delivery_input.setStyleSheet(STYLES["INPUT_STYLE"])
+        self.date_delivery_input.dateChanged.connect(self.validate_dates)
         layout.addWidget(self.date_delivery_input)
+
+        self.date_error_label = QLabel("")
+        self.date_error_label.setStyleSheet(STYLES.get("ERROR_LABEL_STYLE", ""))
+        self.date_error_label.setWordWrap(True)
+        layout.addWidget(self.date_error_label)
 
         buttons_layout = QHBoxLayout()
 
@@ -206,9 +213,37 @@ class OrderFormWindow(QMainWindow):
                 )
             )
 
+    def validate_dates(self):
+        """Валидация дат - дата создания не должна быть позже даты выдачи"""
+        date_order = self.date_order_input.date().toPython()
+        date_delivery = self.date_delivery_input.date().toPython()
+
+        if date_order and date_delivery and date_order > date_delivery:
+            self.date_error_label.setText(
+                "Дата заказа не может быть позже даты выдачи!"
+            )
+            self.date_error_label.setVisible(True)
+            self.date_delivery_input.setStyleSheet(STYLES.get("INPUT_ERROR_STYLE", ""))
+            self.date_order_input.setStyleSheet(STYLES.get("INPUT_ERROR_STYLE", ""))
+            return False
+        else:
+            self.date_error_label.setText("")
+            self.date_error_label.setVisible(False)
+            self.date_delivery_input.setStyleSheet(STYLES["INPUT_STYLE"])
+            self.date_order_input.setStyleSheet(STYLES["INPUT_STYLE"])
+            return True
+
     def handle_save(self):
         """Обработка сохранения"""
         try:
+            if not self.validate_dates():
+                QMessageBox.warning(
+                    self,
+                    "Ошибка валидации",
+                    "Дата заказа не может быть позже даты выдачи!",
+                )
+                return
+
             status = self.status_combo.currentText()
             user_id = self.user_combo.currentData()
             pick_up_point_id = self.pick_up_combo.currentData()
@@ -227,6 +262,14 @@ class OrderFormWindow(QMainWindow):
                 if date_delivery
                 else None
             )
+
+            if created_at and delivered_at and created_at > delivered_at:
+                QMessageBox.warning(
+                    self,
+                    "Ошибка валидации",
+                    "Дата заказа не может быть позже даты выдачи!",
+                )
+                return
 
             if self.order:
                 updated_order = run_async_sync(

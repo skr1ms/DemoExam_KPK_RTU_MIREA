@@ -268,7 +268,7 @@ STYLES = {
     # Стиль для выбранной карточки заказа
     "ORDER_CARD_SELECTED_STYLE": """
         QFrame {
-            border: 2px solid #00FA9A;
+            border: 2px solid #7FFF00;
         }
     """,
     # Стили для карточки товара (ProductCard)
@@ -307,7 +307,7 @@ STYLES = {
     # Стиль для выбранной карточки товара
     "PRODUCT_CARD_SELECTED_STYLE": """
         QFrame {
-            border: 2px solid #00FA9A;
+            border: 2px solid #7FFF00;
         }
     """,
     # Стили для цены в карточке товара
@@ -340,6 +340,44 @@ STYLES = {
         QScrollArea {
             border: 1px solid #000000;
             background-color: #FFFFFF;
+        }
+    """,
+    # Стиль для строки с количеством 0
+    "PRODUCT_CARD_COUNT_ZERO_STYLE": """
+        QLabel {
+            background-color: #ADD8E6;
+            padding: 2px;
+        }
+    """,
+    # Стиль для метки ошибки валидации
+    "ERROR_LABEL_STYLE": """
+        QLabel {
+            font-family: "Times New Roman";
+            font-size: 10px;
+            color: #FF0000;
+            background-color: transparent;
+            padding: 2px;
+        }
+    """,
+    # Стиль для поля ввода с ошибкой
+    "INPUT_ERROR_STYLE": """
+        QDateEdit {
+            background-color: #FFFFFF;
+            border: 2px solid #FF0000;
+            padding: 10px;
+            font-family: "Times New Roman";
+            font-size: 14px;
+            color: #000000;
+            min-height: 35px;
+        }
+        QLineEdit {
+            background-color: #FFFFFF;
+            border: 2px solid #FF0000;
+            padding: 10px;
+            font-family: "Times New Roman";
+            font-size: 14px;
+            color: #000000;
+            min-height: 35px;
         }
     """,
 }
